@@ -2,43 +2,100 @@ let blocks = document.querySelectorAll(".block")
 let compEasyTurnBtn = document.querySelector("#easy-comp-btn")
 let compHardTurnBtn = document.querySelector("#hard-comp-btn")
 let winnerBanner = document.querySelector("h1")
+let resetBtn = document.querySelector("#reset-btn")
+let crossPlayerBtn = document.querySelector('#cross-player-btn')
+let crossCompEasyBtn = document.querySelector('#cross-easycomp-btn')
+let crossCompHardBtn = document.querySelector('#cross-hardcomp-btn')
+let crossStartBtn = document.querySelector('#cross-start-btn')
+let noughtPlayerBtn = document.querySelector('#nought-player-btn')
+let noughtCompEasyBtn = document.querySelector('#nought-easycomp-btn')
+let noughtCompHardBtn = document.querySelector('#nought-hardcomp-btn')
+let playerSelectBtns = document.querySelectorAll('.player-select-btns')
+let game = {
+    crossesPlayer: "player", //player easyComp hardComp -> are the options
+    noughtsPlayer: "player",
+    currentPlayer: "x",
+    playerSymbol: "X",
+    oppositionPlayer: "o"
+}
 
 for (let i = 0; i < blocks.length; i++) {
     blocks[i].addEventListener("click", playerMove)
 }
 compEasyTurnBtn.addEventListener("click", computerEasyMove)
 compHardTurnBtn.addEventListener("click", computerHardMove)
+resetBtn.addEventListener("click", resetGame)
 
-function playerMove(e) {
-    e.target.textContent = "X";
-    e.target.dataset.value = "x";
-    let isWinner = checkWinner(getCurrentGameStatus())
-    if (isWinner) {
-        displayWinner(isWinner)
+for (let i = 0; i < playerSelectBtns.length; i++) {
+    playerSelectBtns[i].addEventListener('click', function(event) {
+        game[event.target.dataset.player] = event.target.dataset.value;
+        resetGame()
+        console.log(game)
+    })
+}
+
+function nextTurn() {
+    if (game.currentPlayer === "x") {
+        game.currentPlayer = "o";
+        game.playerSymbol = "O";
+        game.oppositionPlayer = "x";
+
+        if (game.noughtsPlayer === "easyComp") {
+            computerEasyMove()
+        } else if (game.noughtsPlayer === "hardComp") {
+            computerHardMove()
+        }
+    } else {
+        game.currentPlayer = "x"
+        game.playerSymbol = "X"
+        game.oppositionPlayer = "o"
+
+        if (game.crossesPlayer === "easyComp") {
+            computerEasyMove()
+        } else if (game.crossesPlayer === "hardComp") {
+            computerHardMove()
+        }
     }
 }
 
-function computerEasyMove(e) {
+function playerMove(e) {
+    e.target.textContent = game.playerSymbol;
+    e.target.dataset.value = game.currentPlayer;
+    let isWinner = checkWinner(getCurrentGameStatus())
+    if (isWinner) {
+        displayWinner(isWinner)
+    } else {
+        nextTurn()
+    }
+}
+
+function computerEasyMove() {
+    //Nice to add a small delay here
     let gameStatusArr = getCurrentGameStatus();
     let availableMovesArray = getAvailableMovesArray(gameStatusArr);
     let randomMoveIndex = Math.floor(Math.random() * availableMovesArray.length)
     let moveBlock = availableMovesArray[randomMoveIndex]
-    blocks[moveBlock].textContent = "O";
-    blocks[moveBlock].dataset.value = "o";
+    blocks[moveBlock].textContent = game.playerSymbol;
+    blocks[moveBlock].dataset.value = game.currentPlayer;
     let isWinner = checkWinner(getCurrentGameStatus())
     if (isWinner) {
         displayWinner(isWinner)
+    } else {
+        nextTurn()
     }
 }
 
 function computerHardMove(e) {
+    //nice to add a delay here to
     let gameStatusArr = getCurrentGameStatus();
     let move = recursiveComputerTurn(gameStatusArr)
-    blocks[move.move].textContent = "O";
-    blocks[move.move].dataset.value = "o";
+    blocks[move.move].textContent = game.playerSymbol;
+    blocks[move.move].dataset.value = game.currentPlayer;
     let isWinner = checkWinner(getCurrentGameStatus())
     if (isWinner) {
         displayWinner(isWinner)
+    } else {
+        nextTurn()
     }
 }
 
@@ -50,14 +107,14 @@ function recursiveComputerTurn(gameStatusArr) {
         let thisMove = {
             move: availableMoves[i]
         }
-        tempGame[availableMoves[i]] = "o"
+        tempGame[availableMoves[i]] = game.currentPlayer;
         let isWinner = checkWinner(tempGame);
         if (!isWinner) {
             let nextRecursionResult = recursiveOpponentTurn(tempGame)
             thisMove.result = nextRecursionResult.result
-        } else if (isWinner === "x") {
+        } else if (isWinner === game.oppositionPlayer) {
             thisMove.result = -1
-        } else if (isWinner === "o") {
+        } else if (isWinner === game.currentPlayer) {
             thisMove.result = 1
         } else if (isWinner === "draw") {
             thisMove.result = 0
@@ -85,14 +142,14 @@ function recursiveOpponentTurn(gameStatusArr) {
         let thisMove = {
             move: availableMoves[i]
         }
-        tempGame[availableMoves[i]] = "x" //NB other player value
+        tempGame[availableMoves[i]] = game.oppositionPlayer //NB other player value 
         let isWinner = checkWinner(tempGame);
         if (!isWinner) {
             let nextRecursionResult = recursiveComputerTurn(tempGame)
             thisMove.result = nextRecursionResult.result
-        } else if (isWinner === "x") {
+        } else if (isWinner === game.oppositionPlayer) {
             thisMove.result = -1
-        } else if (isWinner === "o") {
+        } else if (isWinner === game.currentPlayer) {
             thisMove.result = 1
         } else if (isWinner === "draw") {
             thisMove.result = 0
@@ -157,9 +214,9 @@ function displayWinner(winningValue) {
     if (winningValue == "draw") {
         winnerBanner.textContent = "Blah - its a draw"
     } else if (winningValue === "o") {
-        winnerBanner.textContent = "Noughts won - pesky computer!"
+        winnerBanner.textContent = "Noughts won!!"
     } else if (winningValue === "x") {
-        winnerBanner.textContent = "Crosses won - you beat the computer!"
+        winnerBanner.textContent = "Crosses won!!"
     } else {
         console.log("Oops thats an error")
     }
@@ -175,4 +232,16 @@ function getMoveFromResultMatrix(moveResultMatrix, resultValue) {
         }
     }
     return false
+}
+
+function resetGame() {
+    for (let i = 0; i < blocks.length; i++) {
+        blocks[i].addEventListener("click", playerMove)
+        blocks[i].textContent = "";
+        blocks[i].dataset.value = "";
+    }
+    winnerBanner.textContent = ""
+    game.currentPlayer = "x";
+    game.playerSymbol = "X";
+    gameoppositionPlayer = "o";
 }
