@@ -14,7 +14,6 @@ function playerMove(e) {
     e.target.dataset.value = "x";
     let isWinner = checkWinner(getCurrentGameStatus())
     if (isWinner) {
-        console.log("truthey?")
         displayWinner(isWinner)
     }
 }
@@ -28,131 +27,88 @@ function computerEasyMove(e) {
     blocks[moveBlock].dataset.value = "o";
     let isWinner = checkWinner(getCurrentGameStatus())
     if (isWinner) {
-        console.log("truthey?")
         displayWinner(isWinner)
     }
 }
 
 function computerHardMove(e) {
-    console.log("start of computer move")
     let gameStatusArr = getCurrentGameStatus();
-    let move = compTurn(gameStatusArr)
-    console.log('Your move is')
-    console.log(move)
+    let move = recursiveComputerTurn(gameStatusArr)
     blocks[move.move].textContent = "O";
     blocks[move.move].dataset.value = "o";
     let isWinner = checkWinner(getCurrentGameStatus())
     if (isWinner) {
-        console.log("truthey?")
         displayWinner(isWinner)
     }
 }
 
-function compTurn(gameStatusArr) {
+function recursiveComputerTurn(gameStatusArr) {
     let availableMoves = getAvailableMovesArray(gameStatusArr)
     let moveResultMatrix = [];
-    console.log("Available moves")
-    console.log(availableMoves)
     for (let i = 0; i < availableMoves.length; i++) {
         let tempGame = [...gameStatusArr]
-        tempGame[availableMoves[i]] = "o"
-        console.log(`Temp game for compTurn loop ${i}`)
-        console.log(tempGame)
-        let result = checkWinner(tempGame);
         let thisMove = {
             move: availableMoves[i]
         }
-        if (!result) {
-            let nextLevelResult = playerTurn(tempGame)
-            console.log("next level result")
-            console.log(nextLevelResult)
-            thisMove.result = nextLevelResult.result
-        } else if (result === "x") {
+        tempGame[availableMoves[i]] = "o"
+        let isWinner = checkWinner(tempGame);
+        if (!isWinner) {
+            let nextRecursionResult = recursiveOpponentTurn(tempGame)
+            thisMove.result = nextRecursionResult.result
+        } else if (isWinner === "x") {
             thisMove.result = -1
-        } else if (result === "o") {
+        } else if (isWinner === "o") {
             thisMove.result = 1
-        } else if (result === "draw") {
+        } else if (isWinner === "draw") {
             thisMove.result = 0
         }
         moveResultMatrix.push(thisMove)
     }
-    console.log("The move matrix is ")
-    console.log(moveResultMatrix)
 
-    //Return the winning move
-    for (let i = 0; i < moveResultMatrix.length; i++) {
-        if (moveResultMatrix[i].result === 1) {
-            return moveResultMatrix[i]
-        }
-    }
-    //If no winning move return draw move
-    for (let i = 0; i < moveResultMatrix.length; i++) {
-        if (moveResultMatrix[i].result === 0) {
-            return moveResultMatrix[i]
-        }
-    }
-    // return losing move as a last resort
-    for (let i = 0; i < moveResultMatrix.length; i++) {
-        if (moveResultMatrix[i].result === -1) {
-            return moveResultMatrix[i]
-        }
+    let winningMove = getMoveFromResultMatrix(moveResultMatrix, 1)
+    let drawMove = getMoveFromResultMatrix(moveResultMatrix, 0)
+    let loseMove = getMoveFromResultMatrix(moveResultMatrix, -1)
+    if (winningMove) {
+        return winningMove
+    } else if (drawMove) {
+        return drawMove
+    } else {
+        return loseMove
     }
 }
 
-function playerTurn(gameStatusArr) {
+function recursiveOpponentTurn(gameStatusArr) {
     let availableMoves = getAvailableMovesArray(gameStatusArr)
     let moveResultMatrix = [];
-    console.log("Player turn avalable moves")
-    console.log(availableMoves)
     for (let i = 0; i < availableMoves.length; i++) {
         let tempGame = [...gameStatusArr]
-        tempGame[availableMoves[i]] = "x" //NB other player value
-        console.log(`Player turn temp game loop ${i}`)
-        console.log(tempGame)
-        let result = checkWinner(tempGame);
         let thisMove = {
             move: availableMoves[i]
         }
-        if (!result) {
-            // debugger
-            let nextLevelResult = compTurn(tempGame)
-            console.log("next level result")
-            console.log(nextLevelResult)
-            thisMove.result = nextLevelResult.result
-
-            // thisMove.result = "inception"
-            // thisMove.result = "incpet"
-
-            console.log("Inception!")
-        } else if (result === "x") {
+        tempGame[availableMoves[i]] = "x" //NB other player value
+        let isWinner = checkWinner(tempGame);
+        if (!isWinner) {
+            let nextRecursionResult = recursiveComputerTurn(tempGame)
+            thisMove.result = nextRecursionResult.result
+        } else if (isWinner === "x") {
             thisMove.result = -1
-        } else if (result === "o") {
+        } else if (isWinner === "o") {
             thisMove.result = 1
-        } else if (result === "draw") {
+        } else if (isWinner === "draw") {
             thisMove.result = 0
         }
         moveResultMatrix.push(thisMove)
     }
-    console.log("Player turn moveResultMatrix")
-    console.log(moveResultMatrix)
 
-    //Return the winning move
-    for (let i = 0; i < moveResultMatrix.length; i++) {
-        if (moveResultMatrix[i].result === -1) {
-            return moveResultMatrix[i]
-        }
-    }
-    //If no winning move return draw move
-    for (let i = 0; i < moveResultMatrix.length; i++) {
-        if (moveResultMatrix[i].result === 0) {
-            return moveResultMatrix[i]
-        }
-    }
-    // return losing move as a last resort
-    for (let i = 0; i < moveResultMatrix.length; i++) {
-        if (moveResultMatrix[i].result === 1) {
-            return moveResultMatrix[i]
-        }
+    let winningMove = getMoveFromResultMatrix(moveResultMatrix, -1)
+    let drawMove = getMoveFromResultMatrix(moveResultMatrix, 0)
+    let loseMove = getMoveFromResultMatrix(moveResultMatrix, 1)
+    if (winningMove) {
+        return winningMove
+    } else if (drawMove) {
+        return drawMove
+    } else {
+        return loseMove
     }
 }
 
@@ -210,4 +166,13 @@ function displayWinner(winningValue) {
     for (let i = 0; i < blocks.length; i++) {
         blocks[i].removeEventListener("click", playerMove)
     }
+}
+
+function getMoveFromResultMatrix(moveResultMatrix, resultValue) {
+    for (let i = 0; i < moveResultMatrix.length; i++) {
+        if (moveResultMatrix[i].result === resultValue) {
+            return moveResultMatrix[i]
+        }
+    }
+    return false
 }
