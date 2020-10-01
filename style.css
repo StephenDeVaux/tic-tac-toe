@@ -1,6 +1,6 @@
 :root {
     --background-color: rgb(241, 243, 206);
-    --button-color: rgb(0, 41, 60);
+    --button-color: rgba(30, 102, 108, 1);
     --highlight-color: rgb(30, 101, 108);
     --board-outline-color: rgb(0, 41, 60);
     --button-highlight-color: rgb(246, 42, 0);
@@ -107,6 +107,7 @@ button {
 
 .player-column {
     border-radius: 20px;
+    border: 4px solid var(--highlight-color);
     margin: 0 20px 20px 20px;
     padding-bottom: 20px;
     transition: background-color 0.5s linear;
@@ -118,16 +119,18 @@ button {
     color: var(--background-color)
 }
 
+.next-turn-highlight button {
+    background-color: var(--background-color);
+    color: var(--highlight-color)
+}
+
 .btn-highlight {
-    background-color: var(--button-highlight-color)
+    background-color: var(--button-highlight-color) !important;
+    color: var(--background-color) !important;
 }
 
 .highlight-win {
     color: var(--button-highlight-color)
-}
-
-#cross-start-btn {
-    visibility: hidden;
 }
 
 .top-button {
@@ -146,7 +149,9 @@ button {
 }
 
 #cross-start-btn {
+    visibility: hidden;
     min-width: 0px;
+    width: 60px;
     padding: 15px;
     margin-top: 10px;
     border-radius: 100%;
