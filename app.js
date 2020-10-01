@@ -223,11 +223,10 @@ function checkWinner(gameArr) {
 
 function displayWinner(winningValue) {
     setTimeout(function() {
-
             if (winningValue == "draw") {
                 drawCounter++;
                 drawCounterSpan.textContent = drawCounter;
-                winnerBanner.textContent = "Blah - its a draw!!"
+                winnerBanner.textContent = "Its a draw!!"
             } else if (winningValue === "o") {
                 winCounterO++
                 winCounterOSpan.textContent = winCounterO
@@ -239,13 +238,9 @@ function displayWinner(winningValue) {
             } else {
                 console.log("Oops thats an error")
             }
-            for (let i = 0; i < blocks.length; i++) {
-                blocks[i].removeEventListener("click", playerMove)
-            }
+            disableAllBlockBtns()
             let winningBlocks = getWinnerArray(getCurrentGameStatus())
             if (winningBlocks) {
-                console.log("done it")
-                console.log(winningBlocks)
                 blocks[winningBlocks[0]].classList.add("highlight-win")
                 blocks[winningBlocks[1]].classList.add("highlight-win")
                 blocks[winningBlocks[2]].classList.add("highlight-win")
@@ -265,7 +260,6 @@ function getMoveFromResultMatrix(moveResultMatrix, resultValue) {
 
 function resetGame() {
     for (let i = 0; i < blocks.length; i++) {
-        blocks[i].addEventListener("click", playerMove)
         blocks[i].textContent = "";
         blocks[i].dataset.value = "";
     }
@@ -275,19 +269,16 @@ function resetGame() {
     gameoppositionPlayer = "o";
     playerBgrndX.classList.add("next-turn-highlight")
     playerBgrndO.classList.remove("next-turn-highlight")
+
     for (let i = 0; i < blocks.length; i++) {
         blocks[i].classList.remove("highlight-win")
     }
     if (game.crossesPlayer === "easyComp" || game.crossesPlayer === "hardComp") {
         crossStartBtn.style.visibility = "visible";
+        disableAllBlockBtns()
     } else {
         crossStartBtn.style.visibility = "hidden";
-    }
-
-    if (game.crossesPlayer === "player") {
         enableBlockButtons()
-    } else {
-        disableAllBlockBtns()
     }
 }
 
@@ -328,7 +319,7 @@ function enableBlockButtons() {
     }
 }
 
-function crossesStartComp() {
+function crossesComputerStart() {
     if (!getCurrentGameStatus().includes("x") && !getCurrentGameStatus().includes("o")) {
         if (game.crossesPlayer === "easyComp" && game.currentPlayer === "x") {
             computerEasyMove()
@@ -343,7 +334,7 @@ function crossesStartComp() {
 //Setup listeners
 enableBlockButtons()
 resetBtn.addEventListener("click", resetGame)
-crossStartBtn.addEventListener("click", crossesStartComp)
+crossStartBtn.addEventListener("click", crossesComputerStart)
 
 for (let i = 0; i < playerXSelectBtns.length; i++) {
     playerXSelectBtns[i].addEventListener('click', function(event) {
