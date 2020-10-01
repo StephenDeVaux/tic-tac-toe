@@ -22,42 +22,45 @@
 </head>
 
 <body>
-    <h2>Tic Tac Toe</h2>
-    <section class="player-select-section">
-        <div>
-            <h3>Crosses wins -?? </h3>
-            <button id="cross-player-btn" class="player-select-btns" data-value="player" data-player="crossesPlayer">Player</button>
-            <button id="cross-easycomp-btn" class="player-select-btns" data-value="easyComp" data-player="crossesPlayer">Computer Easy</button>
-            <button id="cross-hardcomp-btn" class="player-select-btns" data-value="hardComp" data-player="crossesPlayer">Computer Hard</button>
-            <button id="cross-start-btn">If computer - then start</button>
-            <h3>Whos turn?? backgroun?</h3>
-        </div>
-        <div></div>
-        <div>
-            <h3>Noughts wins - ??</h3>
-            <button id="nought-player-btn" class="player-select-btns" data-value="player" data-player="noughtsPlayer">Player</button>
-            <button id="nought-easycomp-btn" class="player-select-btns" data-value="easyComp" data-player="noughtsPlayer">Computer Easy</button>
-            <button id="nought-hardcomp-btn" class="player-select-btns" data-value="hardComp" data-player="noughtsPlayer">Computer Hard</button>
-            <h3>Whos turn background??</h3>
-        </div>
-    </section>
-    <section class=" board ">
-        <div id="block1" data-value="" class="block"></div>
-        <div id="block2" data-value="" class="block"></div>
-        <div id="block3" data-value="" class="block"></div>
-        <div id="block4" data-value="" class="block"></div>
-        <div id="block5" data-value="" class="block"></div>
-        <div id="block6" data-value="" class="block"></div>
-        <div id="block7" data-value="" class="block"></div>
-        <div id="block8" data-value="" class="block"></div>
-        <div id="block9" data-value="" class="block"></div>
-    </section>
-    <button id="easy-comp-btn">Computer Easy turn</button>
-    <button id="hard-comp-btn">Computer hard turn</button>
-    <button id="reset-btn">Reset</button>
-    <h1></h1>
-    <script src="app.js "></script>
+    <main class="container">
 
+        <h1>Tic Tac Toe</h1>
+        <section class="player-select-section">
+            <div>
+                <h3>Crosses wins - <span id="x-wins">0</span> </h3>
+                <button id="cross-player-btn" class="player-select-btns" data-value="player" data-player="crossesPlayer">Player</button>
+                <button id="cross-easycomp-btn" class="player-select-btns" data-value="easyComp" data-player="crossesPlayer">Computer Easy</button>
+                <button id="cross-hardcomp-btn" class="player-select-btns" data-value="hardComp" data-player="crossesPlayer">Computer Hard</button>
+                <button id="cross-start-btn">If computer - then start</button>
+                <h3>Whos turn?? backgroun?</h3>
+            </div>
+            <div>
+                <h3>Draws</h3>
+                <h3 id="draws">0</h3>
+            </div>
+            <div>
+                <h3>Noughts wins - <span id="o-wins">0</span></h3>
+                <button id="nought-player-btn" class="player-select-btns" data-value="player" data-player="noughtsPlayer">Player</button>
+                <button id="nought-easycomp-btn" class="player-select-btns" data-value="easyComp" data-player="noughtsPlayer">Computer Easy</button>
+                <button id="nought-hardcomp-btn" class="player-select-btns" data-value="hardComp" data-player="noughtsPlayer">Computer Hard</button>
+                <h3>Whos turn background??</h3>
+            </div>
+        </section>
+        <section class=" board ">
+            <div id="block1" data-value="" class="block"></div>
+            <div id="block2" data-value="" class="block"></div>
+            <div id="block3" data-value="" class="block"></div>
+            <div id="block4" data-value="" class="block"></div>
+            <div id="block5" data-value="" class="block"></div>
+            <div id="block6" data-value="" class="block"></div>
+            <div id="block7" data-value="" class="block"></div>
+            <div id="block8" data-value="" class="block"></div>
+            <div id="block9" data-value="" class="block"></div>
+        </section>
+        <button id="reset-btn">Reset</button>
+        <h2></h2>
+        <script src="app.js "></script>
+    </main>
 </body>
 
 </html>

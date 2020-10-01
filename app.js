@@ -1,16 +1,11 @@
 let blocks = document.querySelectorAll(".block")
-let compEasyTurnBtn = document.querySelector("#easy-comp-btn")
-let compHardTurnBtn = document.querySelector("#hard-comp-btn")
-let winnerBanner = document.querySelector("h1")
+let winnerBanner = document.querySelector("h2")
 let resetBtn = document.querySelector("#reset-btn")
-let crossPlayerBtn = document.querySelector('#cross-player-btn')
-let crossCompEasyBtn = document.querySelector('#cross-easycomp-btn')
-let crossCompHardBtn = document.querySelector('#cross-hardcomp-btn')
 let crossStartBtn = document.querySelector('#cross-start-btn')
-let noughtPlayerBtn = document.querySelector('#nought-player-btn')
-let noughtCompEasyBtn = document.querySelector('#nought-easycomp-btn')
-let noughtCompHardBtn = document.querySelector('#nought-hardcomp-btn')
 let playerSelectBtns = document.querySelectorAll('.player-select-btns')
+let winCounterXSpan = document.querySelector('#x-wins')
+let winCounterOSpan = document.querySelector('#o-wins')
+let drawCounterSpan = document.querySelector('#draws')
 let game = {
     crossesPlayer: "player", //player easyComp hardComp -> are the options
     noughtsPlayer: "player",
@@ -18,13 +13,26 @@ let game = {
     playerSymbol: "X",
     oppositionPlayer: "o"
 }
+let recursionIterations = 0;
+let winCounterX = 0;
+let winCounterO = 0;
+let drawCounter = 0;
 
 for (let i = 0; i < blocks.length; i++) {
     blocks[i].addEventListener("click", playerMove)
 }
-compEasyTurnBtn.addEventListener("click", computerEasyMove)
-compHardTurnBtn.addEventListener("click", computerHardMove)
+
 resetBtn.addEventListener("click", resetGame)
+crossStartBtn.addEventListener("click", function() {
+    if (!getCurrentGameStatus().includes("x") && !getCurrentGameStatus().includes("o")) {
+
+        if (game.crossesPlayer === "easyComp" && game.currentPlayer === "x") {
+            computerEasyMove()
+        } else if (game.crossesPlayer === "hardComp") {
+            computerHardMove()
+        }
+    }
+})
 
 for (let i = 0; i < playerSelectBtns.length; i++) {
     playerSelectBtns[i].addEventListener('click', function(event) {
@@ -61,6 +69,7 @@ function nextTurn() {
 function playerMove(e) {
     e.target.textContent = game.playerSymbol;
     e.target.dataset.value = game.currentPlayer;
+    e.target.removeEventListener("click", playerMove)
     let isWinner = checkWinner(getCurrentGameStatus())
     if (isWinner) {
         displayWinner(isWinner)
@@ -70,36 +79,47 @@ function playerMove(e) {
 }
 
 function computerEasyMove() {
-    //Nice to add a small delay here
-    let gameStatusArr = getCurrentGameStatus();
-    let availableMovesArray = getAvailableMovesArray(gameStatusArr);
-    let randomMoveIndex = Math.floor(Math.random() * availableMovesArray.length)
-    let moveBlock = availableMovesArray[randomMoveIndex]
-    blocks[moveBlock].textContent = game.playerSymbol;
-    blocks[moveBlock].dataset.value = game.currentPlayer;
-    let isWinner = checkWinner(getCurrentGameStatus())
-    if (isWinner) {
-        displayWinner(isWinner)
-    } else {
-        nextTurn()
-    }
+    setTimeout(function() {
+            let gameStatusArr = getCurrentGameStatus();
+            let availableMovesArray = getAvailableMovesArray(gameStatusArr);
+            let randomMoveIndex = Math.floor(Math.random() * availableMovesArray.length)
+            let moveBlock = availableMovesArray[randomMoveIndex]
+            blocks[moveBlock].textContent = game.playerSymbol;
+            blocks[moveBlock].dataset.value = game.currentPlayer;
+            blocks[moveBlock].removeEventListener("click", playerMove)
+            let isWinner = checkWinner(getCurrentGameStatus())
+            if (isWinner) {
+                displayWinner(isWinner)
+            } else {
+                nextTurn()
+            }
+        },
+        500
+    )
 }
 
 function computerHardMove(e) {
-    //nice to add a delay here to
-    let gameStatusArr = getCurrentGameStatus();
-    let move = recursiveComputerTurn(gameStatusArr)
-    blocks[move.move].textContent = game.playerSymbol;
-    blocks[move.move].dataset.value = game.currentPlayer;
-    let isWinner = checkWinner(getCurrentGameStatus())
-    if (isWinner) {
-        displayWinner(isWinner)
-    } else {
-        nextTurn()
-    }
+    setTimeout(function() {
+            recursionIterations = 0
+                //nice to add a delay here to
+            let gameStatusArr = getCurrentGameStatus();
+            let move = recursiveComputerTurn(gameStatusArr)
+            blocks[move.move].textContent = game.playerSymbol;
+            blocks[move.move].dataset.value = game.currentPlayer;
+            blocks[move.move].removeEventListener("click", playerMove)
+            console.log(`Number of solutions calculated - ${recursionIterations}`)
+            let isWinner = checkWinner(getCurrentGameStatus())
+            if (isWinner) {
+                displayWinner(isWinner)
+            } else {
+                nextTurn()
+            }
+        },
+        500)
 }
 
 function recursiveComputerTurn(gameStatusArr) {
+    recursionIterations++
     let availableMoves = getAvailableMovesArray(gameStatusArr)
     let moveResultMatrix = [];
     for (let i = 0; i < availableMoves.length; i++) {
@@ -135,6 +155,7 @@ function recursiveComputerTurn(gameStatusArr) {
 }
 
 function recursiveOpponentTurn(gameStatusArr) {
+    recursionIterations++
     let availableMoves = getAvailableMovesArray(gameStatusArr)
     let moveResultMatrix = [];
     for (let i = 0; i < availableMoves.length; i++) {
@@ -212,10 +233,16 @@ function checkWinner(gameArr) {
 
 function displayWinner(winningValue) {
     if (winningValue == "draw") {
+        drawCounter++;
+        drawCounterSpan.textContent = drawCounter;
         winnerBanner.textContent = "Blah - its a draw"
     } else if (winningValue === "o") {
+        winCounterO++
+        winCounterOSpan.textContent = winCounterO
         winnerBanner.textContent = "Noughts won!!"
     } else if (winningValue === "x") {
+        winCounterX++
+        winCounterXSpan.textContent = winCounterX
         winnerBanner.textContent = "Crosses won!!"
     } else {
         console.log("Oops thats an error")
