@@ -2,10 +2,17 @@ let blocks = document.querySelectorAll(".block")
 let winnerBanner = document.querySelector("h2")
 let resetBtn = document.querySelector("#reset-btn")
 let crossStartBtn = document.querySelector('#cross-start-btn')
-let playerSelectBtns = document.querySelectorAll('.player-select-btns')
+let playerXSelectBtns = document.querySelectorAll('.playerX-select-btns')
+let playerOSelectBtns = document.querySelectorAll('.playerO-select-btns')
 let winCounterXSpan = document.querySelector('#x-wins')
 let winCounterOSpan = document.querySelector('#o-wins')
 let drawCounterSpan = document.querySelector('#draws')
+let playerBgrndX = document.querySelector("#player-bkgrnd-x")
+let playerBgrndO = document.querySelector("#player-bkgrnd-o")
+let recursionIterations = 0;
+let winCounterX = 0;
+let winCounterO = 0;
+let drawCounter = 0;
 let game = {
     crossesPlayer: "player", //player easyComp hardComp -> are the options
     noughtsPlayer: "player",
@@ -13,55 +20,39 @@ let game = {
     playerSymbol: "X",
     oppositionPlayer: "o"
 }
-let recursionIterations = 0;
-let winCounterX = 0;
-let winCounterO = 0;
-let drawCounter = 0;
-
-for (let i = 0; i < blocks.length; i++) {
-    blocks[i].addEventListener("click", playerMove)
-}
-
-resetBtn.addEventListener("click", resetGame)
-crossStartBtn.addEventListener("click", function() {
-    if (!getCurrentGameStatus().includes("x") && !getCurrentGameStatus().includes("o")) {
-
-        if (game.crossesPlayer === "easyComp" && game.currentPlayer === "x") {
-            computerEasyMove()
-        } else if (game.crossesPlayer === "hardComp") {
-            computerHardMove()
-        }
-    }
-})
-
-for (let i = 0; i < playerSelectBtns.length; i++) {
-    playerSelectBtns[i].addEventListener('click', function(event) {
-        game[event.target.dataset.player] = event.target.dataset.value;
-        resetGame()
-        console.log(game)
-    })
-}
 
 function nextTurn() {
     if (game.currentPlayer === "x") {
         game.currentPlayer = "o";
         game.playerSymbol = "O";
         game.oppositionPlayer = "x";
+        playerBgrndX.classList.remove("next-turn-highlight")
+        playerBgrndO.classList.add("next-turn-highlight")
 
         if (game.noughtsPlayer === "easyComp") {
+            disableAllBlockBtns()
             computerEasyMove()
         } else if (game.noughtsPlayer === "hardComp") {
+            disableAllBlockBtns()
             computerHardMove()
+        } else {
+            enableBlockButtons()
         }
     } else {
         game.currentPlayer = "x"
         game.playerSymbol = "X"
         game.oppositionPlayer = "o"
+        playerBgrndX.classList.add("next-turn-highlight")
+        playerBgrndO.classList.remove("next-turn-highlight")
 
         if (game.crossesPlayer === "easyComp") {
+            disableAllBlockBtns()
             computerEasyMove()
         } else if (game.crossesPlayer === "hardComp") {
+            disableAllBlockBtns()
             computerHardMove()
+        } else {
+            enableBlockButtons()
         }
     }
 }
@@ -69,7 +60,7 @@ function nextTurn() {
 function playerMove(e) {
     e.target.textContent = game.playerSymbol;
     e.target.dataset.value = game.currentPlayer;
-    e.target.removeEventListener("click", playerMove)
+    e.target.classList.add("flip-in-hor-bottom")
     let isWinner = checkWinner(getCurrentGameStatus())
     if (isWinner) {
         displayWinner(isWinner)
@@ -82,11 +73,11 @@ function computerEasyMove() {
     setTimeout(function() {
             let gameStatusArr = getCurrentGameStatus();
             let availableMovesArray = getAvailableMovesArray(gameStatusArr);
-            let randomMoveIndex = Math.floor(Math.random() * availableMovesArray.length)
-            let moveBlock = availableMovesArray[randomMoveIndex]
-            blocks[moveBlock].textContent = game.playerSymbol;
-            blocks[moveBlock].dataset.value = game.currentPlayer;
-            blocks[moveBlock].removeEventListener("click", playerMove)
+            let randomMove = Math.floor(Math.random() * availableMovesArray.length)
+            let moveBlockIndex = availableMovesArray[randomMove]
+            blocks[moveBlockIndex].textContent = game.playerSymbol;
+            blocks[moveBlockIndex].dataset.value = game.currentPlayer;
+            blocks[moveBlockIndex].classList.add("flip-in-hor-bottom")
             let isWinner = checkWinner(getCurrentGameStatus())
             if (isWinner) {
                 displayWinner(isWinner)
@@ -101,12 +92,11 @@ function computerEasyMove() {
 function computerHardMove(e) {
     setTimeout(function() {
             recursionIterations = 0
-                //nice to add a delay here to
             let gameStatusArr = getCurrentGameStatus();
-            let move = recursiveComputerTurn(gameStatusArr)
-            blocks[move.move].textContent = game.playerSymbol;
-            blocks[move.move].dataset.value = game.currentPlayer;
-            blocks[move.move].removeEventListener("click", playerMove)
+            let moveObject = recursiveComputerTurn(gameStatusArr)
+            blocks[moveObject.move].textContent = game.playerSymbol;
+            blocks[moveObject.move].dataset.value = game.currentPlayer;
+            blocks[moveObject.move].classList.add("flip-in-hor-bottom")
             console.log(`Number of solutions calculated - ${recursionIterations}`)
             let isWinner = checkWinner(getCurrentGameStatus())
             if (isWinner) {
@@ -232,24 +222,36 @@ function checkWinner(gameArr) {
 }
 
 function displayWinner(winningValue) {
-    if (winningValue == "draw") {
-        drawCounter++;
-        drawCounterSpan.textContent = drawCounter;
-        winnerBanner.textContent = "Blah - its a draw"
-    } else if (winningValue === "o") {
-        winCounterO++
-        winCounterOSpan.textContent = winCounterO
-        winnerBanner.textContent = "Noughts won!!"
-    } else if (winningValue === "x") {
-        winCounterX++
-        winCounterXSpan.textContent = winCounterX
-        winnerBanner.textContent = "Crosses won!!"
-    } else {
-        console.log("Oops thats an error")
-    }
-    for (let i = 0; i < blocks.length; i++) {
-        blocks[i].removeEventListener("click", playerMove)
-    }
+    setTimeout(function() {
+
+            if (winningValue == "draw") {
+                drawCounter++;
+                drawCounterSpan.textContent = drawCounter;
+                winnerBanner.textContent = "Blah - its a draw!!"
+            } else if (winningValue === "o") {
+                winCounterO++
+                winCounterOSpan.textContent = winCounterO
+                winnerBanner.textContent = "Noughts won!!"
+            } else if (winningValue === "x") {
+                winCounterX++
+                winCounterXSpan.textContent = winCounterX
+                winnerBanner.textContent = "Crosses won!!"
+            } else {
+                console.log("Oops thats an error")
+            }
+            for (let i = 0; i < blocks.length; i++) {
+                blocks[i].removeEventListener("click", playerMove)
+            }
+            let winningBlocks = getWinnerArray(getCurrentGameStatus())
+            if (winningBlocks) {
+                console.log("done it")
+                console.log(winningBlocks)
+                blocks[winningBlocks[0]].classList.add("highlight-win")
+                blocks[winningBlocks[1]].classList.add("highlight-win")
+                blocks[winningBlocks[2]].classList.add("highlight-win")
+            }
+        },
+        700)
 }
 
 function getMoveFromResultMatrix(moveResultMatrix, resultValue) {
@@ -271,4 +273,96 @@ function resetGame() {
     game.currentPlayer = "x";
     game.playerSymbol = "X";
     gameoppositionPlayer = "o";
+    playerBgrndX.classList.add("next-turn-highlight")
+    playerBgrndO.classList.remove("next-turn-highlight")
+    for (let i = 0; i < blocks.length; i++) {
+        blocks[i].classList.remove("highlight-win")
+    }
+    if (game.crossesPlayer === "easyComp" || game.crossesPlayer === "hardComp") {
+        crossStartBtn.style.visibility = "visible";
+    } else {
+        crossStartBtn.style.visibility = "hidden";
+    }
+
+    if (game.crossesPlayer === "player") {
+        enableBlockButtons()
+    } else {
+        disableAllBlockBtns()
+    }
+}
+
+function getWinnerArray(gameArr) {
+    if (gameArr[0] == gameArr[1] && gameArr[0] === gameArr[2] && gameArr[0] !== "") {
+        return [0, 1, 2];
+    } else if (gameArr[3] == gameArr[4] && gameArr[3] === gameArr[5] && gameArr[3] !== "") {
+        return [3, 4, 5];
+    } else if (gameArr[6] == gameArr[7] && gameArr[6] === gameArr[8] && gameArr[6] !== "") {
+        return [6, 7, 8];
+    } else if (gameArr[0] == gameArr[3] && gameArr[0] === gameArr[6] && gameArr[0] !== "") {
+        return [0, 3, 6];
+    } else if (gameArr[1] == gameArr[4] && gameArr[1] === gameArr[7] && gameArr[1] !== "") {
+        return [1, 4, 7];
+    } else if (gameArr[2] == gameArr[5] && gameArr[2] === gameArr[8] && gameArr[2] !== "") {
+        return [2, 5, 8];
+    } else if (gameArr[0] == gameArr[4] && gameArr[0] === gameArr[8] && gameArr[0] !== "") {
+        return [0, 4, 8];
+    } else if (gameArr[2] == gameArr[4] && gameArr[2] === gameArr[6] && gameArr[2] !== "") {
+        return [2, 4, 6];
+    } else if (!gameArr.includes("")) {
+        return false;
+    }
+    return false // Returns false if there is no winner yet
+}
+
+function disableAllBlockBtns() {
+    for (let i = 0; i < blocks.length; i++) {
+        blocks[i].removeEventListener("click", playerMove)
+    }
+}
+
+function enableBlockButtons() {
+    for (let i = 0; i < blocks.length; i++) {
+        if (blocks[i].dataset.value === "") {
+            blocks[i].addEventListener("click", playerMove)
+        }
+    }
+}
+
+function crossesStartComp() {
+    if (!getCurrentGameStatus().includes("x") && !getCurrentGameStatus().includes("o")) {
+        if (game.crossesPlayer === "easyComp" && game.currentPlayer === "x") {
+            computerEasyMove()
+        } else if (game.crossesPlayer === "hardComp" && game.currentPlayer === "x") {
+            computerHardMove()
+        }
+    }
+    crossStartBtn.style.visibility = "hidden";
+}
+
+
+//Setup listeners
+enableBlockButtons()
+resetBtn.addEventListener("click", resetGame)
+crossStartBtn.addEventListener("click", crossesStartComp)
+
+for (let i = 0; i < playerXSelectBtns.length; i++) {
+    playerXSelectBtns[i].addEventListener('click', function(event) {
+        game[event.target.dataset.player] = event.target.dataset.value;
+        playerXSelectBtns[0].classList.remove("btn-highlight")
+        playerXSelectBtns[1].classList.remove("btn-highlight")
+        playerXSelectBtns[2].classList.remove("btn-highlight")
+        event.target.classList.add("btn-highlight")
+        resetGame()
+    })
+}
+
+for (let i = 0; i < playerOSelectBtns.length; i++) {
+    playerOSelectBtns[i].addEventListener('click', function(event) {
+        game[event.target.dataset.player] = event.target.dataset.value;
+        playerOSelectBtns[0].classList.remove("btn-highlight")
+        playerOSelectBtns[1].classList.remove("btn-highlight")
+        playerOSelectBtns[2].classList.remove("btn-highlight")
+        event.target.classList.add("btn-highlight")
+        resetGame()
+    })
 }
