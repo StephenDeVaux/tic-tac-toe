@@ -7,7 +7,7 @@ Built using HTML/Javascript/CSS and Animista for the animations of the player mo
 ![alt text](https://github.com/StephenDeVaux/tic-tac-toe/blob/master/images/tictactoe.png?raw=true "Tic Tac Toe")
 
 ### 1. How to play
-Its a traditional Tic Tac Toe game, where the first person to have 3 in a row wins. Each side can either play as a Human(ie yourself) an easy computer player or a hard computer player. You can also watch the computer battle itself. 
+Its a traditional Tic Tac Toe game, where the first person to have 3 in a row wins. Each side can either play as a Human(ie yourself) an easy computer player or a hard computer player. You can also watch the computer battle itself. For interest's sake the number of solutions the computer calculates is printed in the console. 
 
 ### 2. Development
 The main part of the development was to get the computer player working correctly. I decided to make 2 levels of difficulty. 
