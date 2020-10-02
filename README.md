@@ -1,7 +1,7 @@
 # Tic-Tac-Toe
 
 Play it here - https://stephendevaux.github.io/tic-tac-toe/
-Built using plain old javascript and Animista for the animations of the player moves.
+Built using plain old HTML/Javascript/CSS and Animista for the animations of the player moves.
 
 ![alt text](https://github.com/StephenDeVaux/tic-tac-toe/blob/master/images/tictactoe.png?raw=true "Tic Tac Toe")
 
@@ -24,7 +24,16 @@ The logic for the individual function which is then used recursively is shown be
 ![alt text](https://github.com/StephenDeVaux/tic-tac-toe/blob/master/images/FunctionLogic.png?raw=true "Tic Tac Toe")
  
 ### 3. Problems
+Although there is an attempt to make it responsive it does not render well on small screens
+The color scheme could be improved by some one with more skill in that area
 
 ### 4. Challenges
+- Getting the computer AI to work properly
+- Working out all the bugs such as allowing the players to make computer moves and etc. Much time spent testing and checking and continously finding things wrong
+- Design and look of the page
 
 ### 5. Lessons
+- Learnt how to solve the computer AI and learnt about using recursive functions as well as a minmax function
+- Learnt how to implement an animation
+- Was great practice for design and styling of the html and css
+
