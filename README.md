@@ -25,8 +25,8 @@ The logic for the individual function which is then used recursively is shown be
 ![alt text](https://github.com/StephenDeVaux/tic-tac-toe/blob/master/images/FunctionLogic.png?raw=true "Tic Tac Toe")
  
 ### 3. Problems
-Although there is an attempt to make it responsive it does not render well on small screens
-The color scheme could be improved by some one with more skill in that area. 
+- Although there is an attempt to make it responsive it does not render well on small screens
+- The color scheme could be improved by some one with more skill in that area. 
 
 ### 4. Challenges
 - Getting the computer AI to work properly
