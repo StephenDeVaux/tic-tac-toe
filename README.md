@@ -1,6 +1,7 @@
 # Tic-Tac-Toe
 
 Play it here - https://stephendevaux.github.io/tic-tac-toe/
+
 Built using plain old HTML/Javascript/CSS and Animista for the animations of the player moves.
 
 ![alt text](https://github.com/StephenDeVaux/tic-tac-toe/blob/master/images/tictactoe.png?raw=true "Tic Tac Toe")
