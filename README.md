@@ -1,8 +1,8 @@
 # Tic-Tac-Toe
 
 Play it here - https://stephendevaux.github.io/tic-tac-toe/
+Built using plain old javascript and Animista for the animations of the player moves.
 
-Over view of game
 ![alt text](https://github.com/StephenDeVaux/tic-tac-toe/blob/master/images/tictactoe.png?raw=true "Tic Tac Toe")
 
 ### 1. How to play
@@ -15,15 +15,14 @@ The main part of the development was to get the computer palyer working correctl
 This was easy to implement and was a starting point for building the frame work for the entire webpage, with the idea of adding the funciton for hard computer level later on. The easy computer level just generates a random move based on the available moves with no logic to attempt to win. 
 
 **Hard Computer Level** 
-Some planning was needed for this. The basic idea is that the best move to proceed with is a solvable problem as the number of possible solutions is sufficiently small to calculate. 
+Some planning was needed for this. The basic idea is that the best move to proceed with is a solvable problem as the number of possible solutions is sufficiently small to calculate them all. 
 
-The overall logic for this is shown below: 
+The overall logic for this is shown below. From the flow chart it can be seen that the same logic is used to calculate the result of a possible move. It is then reused in each layer of solution solving. Therefore the function will actually call itself within it, and continue to do so until it finds a result, which is the propogated back up until finally each branch of option has a solution. 
 ![alt text](https://github.com/StephenDeVaux/tic-tac-toe/blob/master/images/OverAllLogic.png?raw=true "Tic Tac Toe")
 
 The logic for the individual function which is then used recursively is shown below: 
 ![alt text](https://github.com/StephenDeVaux/tic-tac-toe/blob/master/images/FunctionLogic.png?raw=true "Tic Tac Toe")
  
-
 ### 3. Problems
 
 ### 4. Challenges
