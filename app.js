@@ -36,6 +36,7 @@ function nextTurn() {
             disableAllBlockBtns()
             computerHardMove()
         } else {
+            disableAllBlockBtns()
             enableBlockButtons()
         }
     } else {
@@ -52,6 +53,7 @@ function nextTurn() {
             disableAllBlockBtns()
             computerHardMove()
         } else {
+            disableAllBlockBtns()
             enableBlockButtons()
         }
     }
